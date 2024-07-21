@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <link rel="manifest" href="./manifest.json">
+    <link rel="icon" href="./images/favicon.png">
+    <link rel="stylesheet" href="./style.css">
+  <title>QR Code Reader</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="qr.css">
+</head>
+<body>
+   <h5 class="card-title w-100 text-center text-warning bg-dark  p-2 mt-0 header-title">QR Code Reader & Generator</h5>
+  <div class="container-fluid d-flex flex-column justify-content-between align-items-center mt-5 p-0">
+           
+    <div class="card">
+      <div class="card-body">
+        <div class="btns-container">
+          <button class="btn btn-outline-primary" id="startScanBtn">📷 Scan</button>
+        <button class="btn btn-outline-secondary" data-toggle="modal" data-target="#generateModal">❖ Generate</button>
+       <label class="btn btn-outline-warning mt-2" role="button" for="qrInput">📎 Read QR</label>
+        </div>
+        <input class="d-none" type="file" id="qrInput" class="mt-3" accept="image/*">
+        <div id="reader" class="mt-3"></div>
+        <div id="qr-parent" class="mt-5 card d-none">
+          <div class="card-header w-100 text-center text-primary fs-3">
+<h4>QR code result  </h4>
+          </div>
+<div class="card-body">
+            <p id="qr-result" class="mt-3">
+            ...
+            </p>
+</div>
+<div class="card-footer d-flex justify-content-between align-items-center gap-4 w-100">
+<button class="btn btn-outline-primary disabled" id="browseButton">
+    <a id="visitButton" target="_blank" >🌐 Browse</a>
+</button>
+<button id="copyButton" class="btn btn-outline-secondary">🔗 Copy</button>
+</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- QR Code Reader Modal -->
+  <div class="modal fade" id="scanModal" data-backdrop="static" tabindex="-1"  aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="scanModalLabel">Scan QR Code</h5>
+        </div>
+        <div class="modal-body">
+          <div  id="readerModal" style="width: 100%; height: 100%;"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-danger" id="stopScanBtn">⌦</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- QR Code Generator Modal -->
+  <div class="modal fade" id="generateModal" tabindex="-1" aria-labelledby="generateModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="generateModalLabel">Generate QR Code</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <input type="text" id="qrText" class="form-control" placeholder="Enter text to generate QR code">
+          <div id="qrCode" class="mt-3"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-success" id="generateBtn">❖ Generate</button>
+          <button type="button" class="btn btn-primary " id="downloadQrBtn">⇩</button>
+        </div>
+      </div>
+    </div>
+  </div>
+<div class="footer fixed-bottom w-100 p-2 text-center bg-dark text-warning">
+  <img class=" me-2 rounded-5" style="width:40px;height:30px" src="images/favicon.png" alt="logo" target="_blank">
+  <a href="https://hamidos-portfolio.onrender.com">Hamidos.com</a>
+</div>
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.2.0/html5-qrcode.min.js"></script>
+  <script src="qr.js"></script>
+</body>
+</html>

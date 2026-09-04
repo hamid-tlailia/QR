@@ -1,6 +1,25 @@
-
 document.addEventListener('DOMContentLoaded', function() {
   let html5QrCode;
+  const urlPattern = /^(https?:\/\/[^\s/$.?#].[^\s]*)$/i;
+
+  function showQrResult(qrCodeMessage) {
+    const qrResult = document.getElementById('qr-result');
+    const browseButton = document.getElementById('browseButton');
+
+    qrResult.textContent = qrCodeMessage;
+
+    if (urlPattern.test(qrCodeMessage)) {
+      browseButton.classList.remove('disabled');
+      browseButton.href = qrCodeMessage;
+      qrResult.classList.add('is-link');
+    } else {
+      browseButton.classList.add('disabled');
+      browseButton.removeAttribute('href');
+      qrResult.classList.remove('is-link');
+    }
+
+    document.getElementById('qr-parent').classList.remove('d-none');
+  }
 
   document.getElementById('startScanBtn').addEventListener('click', function() {
     $('#scanModal').modal('show');
@@ -11,31 +30,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     html5QrCode.start({ facingMode: "environment" }, { fps: 10, qrbox: 150 },
       qrCodeMessage => {
-        const urlPattern = /^(https?:\/\/[^\s/$.?#].[^\s]*)$/i; 
-const qrResult =  document.getElementById("qr-result")
-  // Check if the value matches the URL pattern
-  if (urlPattern.test(qrCodeMessage)) {
-    // Enable the browseButton
-    const browseButton = document.getElementById("browseButton");
-    browseButton.classList.remove("disabled"); 
-
-    // Set the href attribute of visitButton
-    const visitButton = document.getElementById("visitButton");
-    visitButton.href = qrCodeMessage;
-  
-  
-  qrResult.textContent = qrCodeMessage;
-  qrResult.style.color="blue"
-          document.getElementById("qr-parent").classList.remove("d-none")
-  } else {
-  qrResult.textContent = qrCodeMessage;
-  qrResult.style.color="black"
-          document.getElementById("qr-parent").classList.remove("d-none")
-    // Optionally disable the browseButton if not a URL
-    const browseButton = document.getElementById("browseButton");
-    
-  browseButton.classList.add("disabled"); 
-  }
+        showQrResult(qrCodeMessage);
         html5QrCode.stop().then(() => {
           $('#scanModal').modal('hide');
         }).catch(err => {
@@ -66,67 +61,46 @@ const qrResult =  document.getElementById("qr-result")
       html5QrCode = new Html5Qrcode("reader");
       html5QrCode.scanFile(file, true)
         .then(qrCodeMessage => {
-if(qrCodeMessage){
-            // Regular expression to check if the text is a URL
-  const urlPattern = /^(https?:\/\/[^\s/$.?#].[^\s]*)$/i; 
-const qrResult =  document.getElementById("qr-result")
-  // Check if the value matches the URL pattern
-  if (urlPattern.test(qrCodeMessage)) {
-    // Enable the browseButton
-    const browseButton = document.getElementById("browseButton");
-    browseButton.classList.remove("disabled"); 
-
-    // Set the href attribute of visitButton
-    const visitButton = document.getElementById("visitButton");
-    visitButton.href = qrCodeMessage;
-  
-  
-  qrResult.textContent = qrCodeMessage;
-  qrResult.style.color="blue"
-          document.getElementById("qr-parent").classList.remove("d-none")
-  } else {
-  qrResult.textContent = qrCodeMessage;
-  qrResult.style.color="black"
-          document.getElementById("qr-parent").classList.remove("d-none")
-    // Optionally disable the browseButton if not a URL
-    const browseButton = document.getElementById("browseButton");
-    
-  browseButton.classList.add("disabled"); 
-  }
-  
-}else {
-  alert("Please select a valid QR code")
-}
+          if (qrCodeMessage) {
+            showQrResult(qrCodeMessage);
+          } else {
+            alert("Please select a valid QR code");
+          }
         })
         .catch(err => {
-          alert("the selected file is not QR code" , error)
+          console.log(`Error reading QR Code: ${err}`);
+          alert("The selected file is not a QR code");
         });
-    }else {
-      alert("the selected file is not supported")
+    } else {
+      alert("The selected file is not supported");
     }
+    event.target.value = '';
   });
 
   document.getElementById('generateBtn').addEventListener('click', function() {
     const qrText = document.getElementById('qrText').value;
     const qrCodeContainer = document.getElementById('qrCode');
-    
-if(qrText.trim().length > 4){
-    // Clear previous QR code
-    qrCodeContainer.innerHTML = '';
 
-    const qr = new QRious({
-      element: qrCodeContainer,
-      value: qrText,
-      size: 200
-    });
-// unable downloadQrBtn
-document.getElementById('downloadQrBtn').classList.remove("disabled")
+    if (qrText.trim().length > 4) {
+      qrCodeContainer.innerHTML = '';
 
-    // Append canvas to the container
-    qrCodeContainer.appendChild(qr.canvas);
-}else {
-  alert("Minimum required value is 5 characters to generate a QR code")
-}
+      const qr = new QRious({
+        element: qrCodeContainer,
+        value: qrText,
+        size: 200
+      });
+
+      document.getElementById('downloadQrBtn').classList.remove("disabled");
+      qrCodeContainer.appendChild(qr.canvas);
+    } else {
+      alert("Minimum required value is 5 characters to generate a QR code");
+    }
+  });
+
+  document.getElementById('qrText').addEventListener('keyup', function(event) {
+    if (event.key === 'Enter') {
+      document.getElementById('generateBtn').click();
+    }
   });
 
   document.getElementById('downloadQrBtn').addEventListener('click', function() {
@@ -143,16 +117,20 @@ document.getElementById('downloadQrBtn').classList.remove("disabled")
       alert("Please generate a QR code first.");
     }
   });
-});
 
-// copy Qr code btn function
-document.getElementById("copyButton").addEventListener('click', (e) => {
-  const value = e.target.parentNode.parentNode.querySelector("#qr-result").textContent;
-  
-  navigator.clipboard.writeText(value).then(() => {
-    alert("Copied!");
-  }).catch((error) => {
-    alert("Error occurred, try again");
-    
+  $('#generateModal').on('hidden.bs.modal', function() {
+    document.getElementById('qrText').value = '';
+    document.getElementById('qrCode').innerHTML = '';
+    document.getElementById('downloadQrBtn').classList.add('disabled');
+  });
+
+  document.getElementById("copyButton").addEventListener('click', function() {
+    const value = document.getElementById("qr-result").textContent;
+
+    navigator.clipboard.writeText(value).then(() => {
+      alert("Copied!");
+    }).catch(() => {
+      alert("Error occurred, try again");
+    });
   });
 });

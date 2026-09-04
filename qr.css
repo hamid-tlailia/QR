@@ -108,6 +108,10 @@ body {
 }
 
 #qr-parent {
+  /* Nested inside the outer .card's card-body, so it must fill that
+     container's width rather than inherit .card's viewport-relative
+     width (which made it wider than its parent and overflow past it). */
+  width: 100%;
   animation: fade-in .25s ease;
 }
 

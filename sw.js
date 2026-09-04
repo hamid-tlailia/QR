@@ -1,4 +1,4 @@
-const CACHE_NAME = 'qr-app-v1';
+const CACHE_NAME = 'qr-app-v2';
 
 const PRECACHE_URLS = [
   './qr.html',
@@ -44,14 +44,29 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
 
-  event.respondWith(
-    caches.match(event.request).then(cached => {
-      const network = fetch(event.request).then(response => {
+  const isSameOrigin = new URL(event.request.url).origin === self.location.origin;
+
+  if (isSameOrigin) {
+    // Network-first for our own app files: online users always get the latest
+    // code immediately, and only fall back to the cached copy when offline.
+    event.respondWith(
+      fetch(event.request).then(response => {
         caches.open(CACHE_NAME).then(cache => cache.put(event.request, response.clone())).catch(() => {});
         return response;
-      }).catch(() => cached || new Response('', { status: 504, statusText: 'Offline' }));
+      }).catch(() => caches.match(event.request))
+    );
+    return;
+  }
 
-      return cached || network;
+  // Cache-first for third-party vendor libraries: they rarely change and
+  // this keeps things fast and reliable offline.
+  event.respondWith(
+    caches.match(event.request).then(cached => {
+      if (cached) return cached;
+      return fetch(event.request).then(response => {
+        caches.open(CACHE_NAME).then(cache => cache.put(event.request, response.clone())).catch(() => {});
+        return response;
+      }).catch(() => new Response('', { status: 504, statusText: 'Offline' }));
     })
   );
 });

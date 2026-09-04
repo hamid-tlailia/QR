@@ -192,7 +192,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
     html5QrCodeCamera.start(
       { facingMode: currentFacingMode },
-      { fps: 10 },
+      {
+        fps: 10,
+        // Request the highest resolution the camera offers (falling back
+        // gracefully since these are "ideal", not "exact"). 1D barcodes
+        // pack much finer detail than QR codes, so the default/low-res
+        // stream a browser picks otherwise is often too coarse to resolve
+        // individual bar widths even when the code itself decodes fine
+        // from a photo.
+        videoConstraints: {
+          facingMode: currentFacingMode,
+          width: { ideal: 1920 },
+          height: { ideal: 1080 },
+        },
+      },
       qrCodeMessage => {
         showResult(qrCodeMessage);
       },

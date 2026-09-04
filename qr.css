@@ -223,20 +223,6 @@ body {
   border-color: transparent;
 }
 
-.ctrl-btn-lg {
-  width: 66px;
-  height: 66px;
-  background: var(--accent);
-  color: #14171c;
-  border: none;
-  box-shadow: 0 10px 26px rgba(255, 193, 7, .4);
-}
-
-.ctrl-btn-lg svg {
-  width: 27px;
-  height: 27px;
-}
-
 /* ---------- Generate view ---------- */
 
 .card {

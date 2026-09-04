@@ -170,8 +170,30 @@
   <script src="qr.js"></script>
   <script>
     if ('serviceWorker' in navigator) {
+      // Whether some service worker was already controlling this page before
+      // this load. A first-ever install (no prior controller) has nothing
+      // stale to escape, so it shouldn't force a reload — only a *replacement*
+      // of an existing controller means a newer version was just installed.
+      var hadController = !!navigator.serviceWorker.controller;
+
       window.addEventListener('load', function () {
-        navigator.serviceWorker.register('./sw.js').catch(function () {});
+        navigator.serviceWorker.register('./sw.js').then(function (registration) {
+          // Ask the browser to check for a new sw.js right now instead of
+          // waiting on its own timing, so a fresh deploy is picked up on
+          // this very visit rather than some indeterminate time later.
+          registration.update().catch(function () {});
+        }).catch(function () {});
+      });
+
+      var reloadedForNewWorker = false;
+      navigator.serviceWorker.addEventListener('controllerchange', function () {
+        if (!hadController) {
+          hadController = true;
+          return;
+        }
+        if (reloadedForNewWorker) return;
+        reloadedForNewWorker = true;
+        window.location.reload();
       });
     }
   </script>

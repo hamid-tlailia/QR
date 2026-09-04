@@ -1,33 +1,166 @@
-    #reader {
-      display: none;
-    }
-    #qrCode {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-    .btn
-    {
-      pointer-events: all;
-    }
-    .btn.disabled {
-      pointer-events: none !important;
-      background-color: #8080808c !important;
-      color: black ;
-    }
-    .card {
-      padding: 0;
-    }
-    .btns-container {
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
-    }
-    .header-title , .footer {
-      background: rgba(5,6,7,0.645);
-backdrop-filter: blur( 2.5px );
--webkit-backdrop-filter: blur( 2.5px );
-border: 1px solid rgba( 255, 255, 255, 0.18 );
-    }
+:root {
+  --accent: #ffc107;
+  --surface: #1a1d24;
+  --surface-alt: rgba(255, 255, 255, 0.04);
+  --border-soft: rgba(255, 255, 255, 0.08);
+  --text: #e9ecef;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  min-height: 100vh;
+  background: linear-gradient(160deg, #14171c 0%, #1f2430 100%);
+  color: var(--text);
+  padding-bottom: 70px;
+}
+
+.header-title, .footer {
+  background: rgba(5, 6, 7, 0.65);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid var(--border-soft);
+  letter-spacing: .5px;
+}
+
+.header-title {
+  font-weight: 600;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, .35);
+}
+
+.card {
+  padding: 0;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border-soft);
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .35);
+  width: min(420px, 92vw);
+}
+
+.card-body {
+  padding: 1.75rem 1.25rem;
+}
+
+.card-header, .card-footer {
+  background: var(--surface-alt);
+  border-color: var(--border-soft);
+}
+
+.btns-container {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn {
+  pointer-events: all;
+  border-radius: 999px;
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn.disabled {
+  pointer-events: none !important;
+  background-color: #8080808c !important;
+  color: #333 !important;
+  border-color: transparent !important;
+  transform: none;
+}
+
+#reader {
+  display: none;
+}
+
+#qrCode {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+
+#qr-parent {
+  animation: fade-in .25s ease;
+}
+
+#qr-result {
+  word-break: break-all;
+  color: var(--text);
+}
+
+#qr-result.is-link {
+  color: #4dabf7;
+  font-weight: 500;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Bootstrap 4.5 doesn't ship .modal-fullscreen (added in Bootstrap 5) */
+.modal-fullscreen {
+  width: 100vw;
+  max-width: 100vw;
+  height: 100%;
+  margin: 0;
+}
+
+.modal-fullscreen .modal-content {
+  height: 100%;
+  border: 0;
+  border-radius: 0;
+}
+
+.modal-content {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border-soft);
+}
+
+.modal-header, .modal-footer {
+  border-color: var(--border-soft);
+}
+
+.close {
+  color: var(--text);
+  text-shadow: none;
+}
+
+.form-control {
+  background: #12141a;
+  border-color: rgba(255, 255, 255, .15);
+  color: var(--text);
+}
+
+.form-control:focus {
+  background: #12141a;
+  color: var(--text);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 .2rem rgba(255, 193, 7, .25);
+}
+
+.form-control::placeholder {
+  color: #8a8f98;
+}
+
+#readerModal video {
+  border-radius: 12px;
+}
+
+@media (max-width: 480px) {
+  .card-body {
+    padding: 1.25rem 1rem;
+  }
+  .header-title {
+    font-size: 1rem;
+  }
+}

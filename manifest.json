@@ -1,6 +1,10 @@
 {
   "short_name": "QR",
   "name": "Hamidos-QRcode",
+  "description": "Scan, read and generate QR codes right in your browser — works offline.",
+  "id": "./qr.html",
+  "scope": "./",
+  "orientation": "portrait",
   "icons": [
     {
       "src": "images/favicon.png",
